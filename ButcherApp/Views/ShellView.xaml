@@ -14,19 +14,28 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ToolBar>
-            <Button Height="35" x:Name="OpenXmlFile">
+        <ToolBar HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
+            <Button Height="35" x:Name="OpenXmlFile" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="File"/>
                     <TextBlock Text="Open"/>
                 </StackPanel>
             </Button>
-            <Button Height="35" x:Name="ExportToExcel">
+            <Button Height="35" x:Name="ExportToExcel" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FileExcel"/>
                     <TextBlock Text="Excel"/>
                 </StackPanel>
             </Button>
+            <Button Height="35" x:Name="SetFolder" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Folder"/>
+                    <TextBlock Text="Folder..."/>
+                </StackPanel>
+            </Button>
+            <TextBlock x:Name="FolderPathName" VerticalAlignment="Center">
+                            ...
+            </TextBlock>
         </ToolBar>
 
         <DataGrid Grid.Row="1" x:Name="DataEntry" AutoGenerateColumns="False">

@@ -17,13 +17,17 @@ namespace ButcherApp.Properties
 	internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
 	{
 
-		private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+		private static string defaultInstance = "";
 
-		public static Settings Default
+		public static string Default
 		{
 			get
 			{
 				return defaultInstance;
+			}
+			set
+			{
+				defaultInstance = value;
 			}
 		}
 	}
