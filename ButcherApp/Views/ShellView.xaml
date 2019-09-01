@@ -10,35 +10,47 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <ToolBar HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
-            <Button Height="35" x:Name="OpenXmlFile" VerticalAlignment="Stretch">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="File"/>
-                    <TextBlock Text="Open"/>
-                </StackPanel>
-            </Button>
-            <Button Height="35" x:Name="ExportToExcel" VerticalAlignment="Stretch">
+
+            <Button Margin="2" Height="35" x:Name="ExportToExcel" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FileExcel"/>
                     <TextBlock Text="Excel"/>
                 </StackPanel>
             </Button>
-            <Button Height="35" x:Name="SetFolder" VerticalAlignment="Stretch">
+            <Button Margin="2" Height="35" x:Name="SetFolder" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Folder"/>
                     <TextBlock Text="Folder..."/>
                 </StackPanel>
             </Button>
-            <TextBlock x:Name="FolderPathName" VerticalAlignment="Center">
-                            ...
+            <Border CornerRadius="1" Margin="2" BorderThickness="1" BorderBrush="#FF1F1F1F">
+                <TextBlock x:Name="FolderPathName" VerticalAlignment="Center" Padding="2">
+                        ...
             </TextBlock>
+            </Border>
+        </ToolBar >
+        <ToolBar Grid.Row="1" ToolBarTray.IsLocked="True">
+            <DatePicker Margin="5" x:Name="StartDateTime">
+                
+            </DatePicker>
+            <TextBlock Text="To"  Padding="8"/>
+            <DatePicker Margin="5" x:Name="EndDateTime">
+                
+            </DatePicker>
+            <Button Margin="5" Height="25" x:Name="OpenXmlFile" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="File"/>
+                    <TextBlock Text="Open"/>
+                </StackPanel>
+            </Button>
         </ToolBar>
-
-        <DataGrid Grid.Row="1" x:Name="DataEntry" AutoGenerateColumns="False">
+        <DataGrid Grid.Row="2" x:Name="DataEntry" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="HeadProgres" Binding="{Binding Path=HeadProgres}"/>
                 <DataGridTemplateColumn Header="Date" CellTemplate="{StaticResource DataGridTemplate}"/>
@@ -57,6 +69,6 @@
                 <DataGridTextColumn Header="Note2" Binding="{Binding Path=Note2}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Grid.Row="2" Height="35" Margin="5" TextWrapping="Wrap" FontSize="18" FontWeight="DemiBold" Text="{Binding Path=Overall}" Padding="3"/>
+        <TextBlock Grid.Row="3" Height="35" Margin="5" TextWrapping="Wrap" FontSize="18" FontWeight="DemiBold" Text="{Binding Path=Overall}" Padding="3"/>
     </Grid>
 </Window>

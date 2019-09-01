@@ -14,7 +14,6 @@ namespace ButcherApp.Converter
 	{
 		readonly string _fileName = "settings.xml";
 	    string _filePath = "";
-		bool folderIsCreated = false;
 		public string FilePath
 		{
 			get
@@ -37,7 +36,6 @@ namespace ButcherApp.Converter
 				File.Create(_fileName);
 			}
 			FilePath = filePath;
-			folderIsCreated = true;
 			GetFilePath();
 		}
 		private void SaveSettings()
