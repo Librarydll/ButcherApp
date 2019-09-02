@@ -53,7 +53,7 @@ namespace ButcherApp.Models
 		public string ProductName { get; set; }
 
 		[XmlElement(ElementName = "ProductProgres")]
-		public string ProductProgres { get; set; }
+		public int ProductProgres { get; set; }
 
 		[XmlElement(ElementName = "ProductTot")]
 		public double ProductTot { get; set; }

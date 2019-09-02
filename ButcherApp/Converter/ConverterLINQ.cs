@@ -40,5 +40,12 @@ namespace ButcherApp.Converter
 			return date;
 		}
 
+		public static void CreateFolder(this string str)
+		{
+			if (Directory.Exists(str))
+				return;
+			Directory.CreateDirectory(str);
+		}
+
 	}
 }

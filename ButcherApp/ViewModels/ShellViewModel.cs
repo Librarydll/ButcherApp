@@ -22,7 +22,7 @@ namespace ButcherApp.ViewModels
 		private string _folderPathName;
 		private DateTime _startDateTime;
 		private DateTime _endDateTime;
-
+		private readonly string _saveExcelDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Excel Documents";
 		public string FolderPathName
 		{
 			get { return _folderPathName; }
@@ -110,10 +110,8 @@ namespace ButcherApp.ViewModels
 					await convert.ChangeDocumnet(file.FullName);
 					temp = convert.DeSerialize(file.FullName);
 					temp2.AddRange(temp);
+					_sortingDate.Add(date);
 				}
-
-				//filteredNames.Append(file.FullName);
-				//_sortingDate.Add(file.FullName.FormatDate());
 			}
 			DataEntry = new BindableCollection<Rec>(temp2);
 			var netSum = DataEntry.Sum(x => x.Net);
@@ -131,6 +129,18 @@ namespace ButcherApp.ViewModels
 				setting = new XmlSetting(Path.GetDirectoryName(openFile.FileName));
 				FolderPathName = Path.GetDirectoryName(openFile.FileName);
 			}
+		}
+		public void ExportToExcel()
+		{
+			if (DataEntry?.Count == 0||DataEntry==null)
+			{
+				MessageBox.Show("Data is empty");
+				return;
+			}
+			ExcelDocument excel = new ExcelDocument();
+			_saveExcelDocumentsPath.CreateFolder();
+			excel.Export(_saveExcelDocumentsPath + Path.Combine ($"\\{_sortingDate.FirstOrDefault().ToShortDateString()}_{_sortingDate.LastOrDefault().ToShortDateString()}.xlsx"),
+				_dataEntry.ToList());
 		}
 
 	}
