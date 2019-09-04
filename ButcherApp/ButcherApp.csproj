@@ -95,7 +95,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Converter\ConverterLINQ.cs" />
+    <Compile Include="Converter\ButcherAppLinq.cs" />
     <Compile Include="Converter\ExcelDocument.cs" />
     <Compile Include="Converter\IExport.cs" />
     <Compile Include="Converter\XMLConvert.cs" />

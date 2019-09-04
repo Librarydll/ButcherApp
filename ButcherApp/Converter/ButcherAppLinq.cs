@@ -11,7 +11,7 @@ using System.Windows;
 
 namespace ButcherApp.Converter
 {
-	public static class ConverterLINQ
+	public static class ButcherAppLinq
 	{
 
 		public static BindableCollection<DateTime> FormatChange(this List<string> collection)
@@ -45,6 +45,11 @@ namespace ButcherApp.Converter
 			if (Directory.Exists(str))
 				return;
 			Directory.CreateDirectory(str);
+		}
+		
+		public static BindableCollection<T> ToBindable<T>(this IEnumerable<T> collection)
+		{
+			return new BindableCollection<T>(collection);
 		}
 
 	}

@@ -16,6 +16,7 @@ namespace ButcherApp.ViewModels
 	public class ShellViewModel :Screen
 	{	
 		private BindableCollection<Rec> _dataEntry;
+		private BindableCollection<Rec> _tempDataEntry;
 		private List<DateTime> _sortingDate = new List<DateTime> ();
 		private XmlSetting setting = null;
 		private string _overall;
@@ -23,6 +24,7 @@ namespace ButcherApp.ViewModels
 		private DateTime _startDateTime;
 		private DateTime _endDateTime;
 		private readonly string _saveExcelDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Excel Documents";
+		private string _selectedFilter;
 		public string FolderPathName
 		{
 			get { return _folderPathName; }
@@ -32,6 +34,36 @@ namespace ButcherApp.ViewModels
 				NotifyOfPropertyChange(() => FolderPathName);
 			}
 		}
+
+		public List<string> FilterName
+		{
+			get { return new List<string> { "HeadProgres","Tare","Net","Gross","Flow", "ProductTot", "HeadName","Note" }; }
+		}
+
+		public string SelectedFilter
+		{
+			get { return _selectedFilter; }
+			set { _selectedFilter = value; NotifyOfPropertyChange(() => SelectedFilter); }
+		}
+
+		private string _searchingString;
+
+		public string SearchingString
+		{
+			get { return _searchingString; }
+			set {
+				if (string.IsNullOrWhiteSpace(value) && _tempDataEntry != null)
+				{
+					DataEntry = _tempDataEntry;
+					var netSum = DataEntry.Sum(x => x.Net);
+					var count = DataEntry.Count;
+
+					Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
+				}
+				_searchingString = value; NotifyOfPropertyChange(() => SearchingString);
+				}
+		}
+
 
 		public BindableCollection<Rec> DataEntry
 		{
@@ -68,8 +100,6 @@ namespace ButcherApp.ViewModels
 				NotifyOfPropertyChange(() => EndDateTime);
 			}
 		}
-
-
 		public ShellViewModel()
 		{
 			StartDateTime = DateTime.Now;
@@ -114,6 +144,7 @@ namespace ButcherApp.ViewModels
 				}
 			}
 			DataEntry = new BindableCollection<Rec>(temp2);
+			_tempDataEntry = DataEntry;
 			var netSum = DataEntry.Sum(x => x.Net);
 			var count = DataEntry.Count;
 
@@ -141,6 +172,53 @@ namespace ButcherApp.ViewModels
 			_saveExcelDocumentsPath.CreateFolder();
 			excel.Export(_saveExcelDocumentsPath + Path.Combine ($"\\{_sortingDate.FirstOrDefault().ToShortDateString()}_{_sortingDate.LastOrDefault().ToShortDateString()}.xlsx"),
 				_dataEntry.ToList());
+		}
+
+		public void SearchData()
+		{
+			int _value = 0;
+
+			switch (SelectedFilter)
+			{
+				case  "HeadProgres":
+					if (Int32.TryParse(SearchingString, out _value))
+						DataEntry = _tempDataEntry.Where(x => x.HeadProgres == _value).ToBindable();
+					break;
+				case "Tare":
+					if(Int32.TryParse(SearchingString,out _value))
+						DataEntry = _tempDataEntry.Where(x => x.Tare== _value).ToBindable();
+					break;
+				case "Net":
+					if (Int32.TryParse(SearchingString, out _value))
+						DataEntry = _tempDataEntry.Where(x => x.Net == _value).ToBindable();
+					break;
+				case "Gross":
+					if (Int32.TryParse(SearchingString, out _value))
+						DataEntry = _tempDataEntry.Where(x => x.Gross == _value).ToBindable();
+					break;
+				case "Flow":
+					if (Int32.TryParse(SearchingString, out _value))
+						DataEntry = _tempDataEntry.Where(x => x.Flow == _value).ToBindable();
+					break;
+				case "ProductTot":
+					double val = 0.0;
+					if (Double.TryParse(SearchingString, out val))
+						DataEntry = _tempDataEntry.Where(x => Convert.ToString(x.ProductProgres).Contains(val.ToString()) ).ToBindable();
+					break;
+				case "HeadName":
+						DataEntry = _tempDataEntry.Where(x => x.HeadName.Contains(SearchingString.ToUpper())).ToBindable();
+					break;
+				case "Note":
+					DataEntry = _tempDataEntry.Where(x => x.Note1.Contains(SearchingString.ToLower())).ToBindable();
+					break;
+
+				default:
+					break;
+			}
+			var netSum = DataEntry.Sum(x => x.Net);
+			var count = DataEntry.Count;
+
+			Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
 		}
 
 	}
