@@ -50,7 +50,16 @@ namespace ButcherApp.Converter
 		private void GetFilePath()
 		{
 			XmlDocument document = new XmlDocument();
-			document.Load(_fileName);
+			try
+			{
+				document.Load(_fileName);
+			}
+			catch (XmlException ex)
+			{
+
+				throw new XmlException(ex.Message);
+			}
+			
 			XmlNode pathNode = document.DocumentElement.SelectSingleNode("FilePath");
 			FilePath = pathNode.InnerText;
 		}

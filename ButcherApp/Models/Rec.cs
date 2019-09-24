@@ -85,11 +85,14 @@ namespace ButcherApp.Models
 		[XmlElement(ElementName = "Note6")]
 		public string Note6 { get; set; }
 
+		[XmlElement(ElementName = "FillerProgres")]
+		public string FillerProgres { get; set; }
+
 		[XmlElement(ElementName = "YearCode")]
-		public int YearCode { get; set; }
+		public string YearCode { get; set; }
 
 		[XmlElement(ElementName = "DayCode")]
-		public int DayCode { get; set; }
+		public string DayCode { get; set; }
 
 		[XmlElement(ElementName = "PlantCode")]
 		public int PlantCode { get; set; }

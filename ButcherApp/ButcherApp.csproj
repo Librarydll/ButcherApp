@@ -100,6 +100,7 @@
     <Compile Include="Converter\IExport.cs" />
     <Compile Include="Converter\XMLConvert.cs" />
     <Compile Include="Converter\XmlSetting.cs" />
+    <Compile Include="Models\ProgressModel.cs" />
     <Compile Include="Models\Rec.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\ShellView.xaml.cs">
@@ -134,7 +135,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Icons\Mainicon.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="StyleDictionary.xaml">
       <SubType>Designer</SubType>

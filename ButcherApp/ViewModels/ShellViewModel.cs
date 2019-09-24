@@ -4,10 +4,8 @@ using Caliburn.Micro;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -35,6 +33,23 @@ namespace ButcherApp.ViewModels
 			}
 		}
 
+		private int _progress;
+
+		public int ProgressValue
+		{
+			get { return _progress; }
+			set { _progress = value; NotifyOfPropertyChange(() => ProgressValue); }
+		}
+
+		private int _maxValue = 100;
+
+		public int MaxValue
+		{
+			get { return _maxValue; }
+			set { _maxValue = value;  NotifyOfPropertyChange(() => MaxValue); }
+		}
+
+
 		public List<string> FilterName
 		{
 			get { return new List<string> { "HeadProgres","Tare","Net","Gross","Flow", "ProductTot", "HeadName","Note" }; }
@@ -55,10 +70,7 @@ namespace ButcherApp.ViewModels
 				if (string.IsNullOrWhiteSpace(value) && _tempDataEntry != null)
 				{
 					DataEntry = _tempDataEntry;
-					var netSum = DataEntry.Sum(x => x.Net);
-					var count = DataEntry.Count;
-
-					Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
+					SetOverall();
 				}
 				_searchingString = value; NotifyOfPropertyChange(() => SearchingString);
 				}
@@ -100,7 +112,7 @@ namespace ButcherApp.ViewModels
 				NotifyOfPropertyChange(() => EndDateTime);
 			}
 		}
-		public ShellViewModel()
+		public  ShellViewModel()
 		{
 			StartDateTime = DateTime.Now;
 			EndDateTime = DateTime.Now;
@@ -125,31 +137,43 @@ namespace ButcherApp.ViewModels
 			}
 			XMLConvert<List<Rec>> convert = new XMLConvert<List<Rec>>();
 			DirectoryInfo directory = new DirectoryInfo(setting.FilePath);
-			FileInfo[] files = directory.GetFiles();
-			string[] filteredNames=new string[files.Length];
+			var files = directory.GetFiles().Where(x => x.FullName.Contains("PX")).ToList();
 			FolderPathName = directory.FullName;
+			ProgressModel prModel = new ProgressModel();
+			var progress = new Progress<ProgressModel>();
+			progress.ProgressChanged +=  (sender, e) =>  ProgressValue = e.Percentage;
+			IProgress<ProgressModel> pr = progress;
 			List<Rec> temp = new List<Rec> ();
 			List<Rec> temp2 = new List<Rec>();
+			int i = 0;
+			MaxValue = files.Count;
 			foreach (var file in files)
 			{
+
 				if (file.Extension.ToLower() != ".dat")
 					continue;
+
 				var date = file.FullName.FormatDate();
+				i++;
 				if (date >= StartDateTime.Date && date <= EndDateTime.Date)
 				{
+					prModel.Percentage = i;
+					pr.Report(prModel);
 					await convert.ChangeDocumnet(file.FullName);
 					temp = convert.DeSerialize(file.FullName);
+					if (temp == null) continue;
 					temp2.AddRange(temp);
 					_sortingDate.Add(date);
 				}
 			}
 			DataEntry = new BindableCollection<Rec>(temp2);
 			_tempDataEntry = DataEntry;
-			var netSum = DataEntry.Sum(x => x.Net);
-			var count = DataEntry.Count;
+			SetOverall();
+			prModel.Percentage = 0;
+			pr.Report(prModel);
 
-			Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
 		}
+
 
 		public void SetFolder()
 		{
@@ -168,12 +192,14 @@ namespace ButcherApp.ViewModels
 				MessageBox.Show("Data is empty");
 				return;
 			}
+			Progress<ProgressModel> progress = new Progress<ProgressModel>();
+			progress.ProgressChanged += (sender, e) => { ProgressValue = e.Percentage; };
+			MaxValue = _dataEntry.Count;
 			ExcelDocument excel = new ExcelDocument();
 			_saveExcelDocumentsPath.CreateFolder();
 			excel.Export(_saveExcelDocumentsPath + Path.Combine ($"\\{_sortingDate.FirstOrDefault().ToShortDateString()}_{_sortingDate.LastOrDefault().ToShortDateString()}.xlsx"),
-				_dataEntry.ToList());
+				_dataEntry.ToList(),progress);
 		}
-
 		public void SearchData()
 		{
 			int _value = 0;
@@ -221,5 +247,13 @@ namespace ButcherApp.ViewModels
 			Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
 		}
 
+
+		public void SetOverall()
+		{
+			var netSum = DataEntry.Sum(x => x.Net);
+			var count = DataEntry.Count;
+
+			Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
+		}
 	}
 }

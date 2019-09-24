@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -16,14 +17,14 @@ namespace ButcherApp.Converter
 {
 	public class ExcelDocument : IExport
 	{
-		public void Export(string filePath,List<Rec> collection)
+		public void Export(string filePath,List<Rec> collection,IProgress<ProgressModel> progress)
 		{	
 			Rec rec = new Rec();
 			string sheetName = Path.GetFileNameWithoutExtension(filePath);
 			XSSFWorkbook xSSF = new XSSFWorkbook();
 			ISheet sheet = xSSF.CreateSheet(sheetName);
 			var propertiesName = rec.GetType().GetProperties();
-
+			ProgressModel model = new ProgressModel();
 			var headerRow = sheet.CreateRow(0);
 			for (int i = 0; i < propertiesName.Length; i++)
 			{
@@ -34,7 +35,8 @@ namespace ButcherApp.Converter
 			{
 				var rowIndex = i + 1;
 				var row = sheet.CreateRow(rowIndex);
-
+				model.Percentage = rowIndex;
+				progress.Report(model);
 				for (int j = 0; j < propertiesName.Length; j++)
 				{
 					
@@ -46,8 +48,8 @@ namespace ButcherApp.Converter
 					cell.SetCellType(cellType);
 				}
 			}
-
-
+			model.Percentage = 0;
+			progress.Report(model);
 			FileStream file = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
 			xSSF.Write(file);
 			file.Dispose();

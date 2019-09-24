@@ -24,10 +24,12 @@ namespace ButcherApp.Converter
 			return newCollection;
 		}
 
-		public static DateTime FormatDate(this string str)
+		public static  DateTime FormatDate(this string str)
 		{
+			if (!str.Contains("PX"))
+				return DateTime.Now;
 			str = Path.GetFileNameWithoutExtension(str);
-			var newStr = str.Remove(0, 2);
+			var newStr = string.Concat(str.ToCharArray().Where(x => char.IsDigit(x)));
 			DateTime date = DateTime.Now;
 			try
 			{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,9 +17,18 @@ namespace ButcherApp.Converter
 		public T DeSerialize(string path)
 		{
 			T _obj = null;
+			Debug.WriteLine(typeof(T));
 			using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
 			{
-				_obj = (T)serializer.Deserialize(stream);
+				try
+				{
+					_obj = (T)serializer.Deserialize(stream);
+				}
+				catch (Exception EX)
+				{
+
+					return null;
+				}
 			}
 			return _obj;
 		}
@@ -48,6 +58,7 @@ namespace ButcherApp.Converter
 					await writer.WriteAsync(bytes, 0, bytes.Length);
 					await writer.WriteLineAsync("</ArrayOfRec>" + Environment.NewLine);
 				}
+
 		}		
 	}
 }
