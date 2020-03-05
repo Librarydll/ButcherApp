@@ -4,6 +4,7 @@ using Caliburn.Micro;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,11 +12,11 @@ using System.Windows;
 
 namespace ButcherApp.ViewModels
 {
-	public class ShellViewModel :Screen
-	{	
+	public class ShellViewModel : Screen
+	{
 		private BindableCollection<Rec> _dataEntry;
 		private BindableCollection<Rec> _tempDataEntry;
-		private List<DateTime> _sortingDate = new List<DateTime> ();
+		private List<DateTime> _sortingDate = new List<DateTime>();
 		private XmlSetting setting = null;
 		private string _overall;
 		private string _folderPathName;
@@ -46,13 +47,13 @@ namespace ButcherApp.ViewModels
 		public int MaxValue
 		{
 			get { return _maxValue; }
-			set { _maxValue = value;  NotifyOfPropertyChange(() => MaxValue); }
+			set { _maxValue = value; NotifyOfPropertyChange(() => MaxValue); }
 		}
 
 
 		public List<string> FilterName
 		{
-			get { return new List<string> { "HeadProgres","Tare","Net","Gross","Flow", "ProductTot", "HeadName","Note" }; }
+			get { return new List<string> { "HeadProgres", "Tare", "Net", "Gross", "Flow", "ProductTot", "HeadName", "Note" }; }
 		}
 
 		public string SelectedFilter
@@ -66,14 +67,15 @@ namespace ButcherApp.ViewModels
 		public string SearchingString
 		{
 			get { return _searchingString; }
-			set {
+			set
+			{
 				if (string.IsNullOrWhiteSpace(value) && _tempDataEntry != null)
 				{
 					DataEntry = _tempDataEntry;
 					SetOverall();
 				}
 				_searchingString = value; NotifyOfPropertyChange(() => SearchingString);
-				}
+			}
 		}
 
 
@@ -112,7 +114,7 @@ namespace ButcherApp.ViewModels
 				NotifyOfPropertyChange(() => EndDateTime);
 			}
 		}
-		public  ShellViewModel()
+		public ShellViewModel()
 		{
 			StartDateTime = DateTime.Now;
 			EndDateTime = DateTime.Now;
@@ -130,35 +132,40 @@ namespace ButcherApp.ViewModels
 				SetFolder();
 				return;
 			}
-			if(DateTime.Compare(StartDateTime,EndDateTime)==1)
+			if (DateTime.Compare(StartDateTime, EndDateTime) == 1)
 			{
 				MessageBox.Show("Invalid Filter");
 				return;
 			}
 			XMLConvert<List<Rec>> convert = new XMLConvert<List<Rec>>();
 			DirectoryInfo directory = new DirectoryInfo(setting.FilePath);
-			var files = directory.GetFiles().Where(x => x.FullName.Contains("PX")).ToList();
+			var files = directory.GetFiles()
+				.Where(x => x.FullName.Contains("PX"))
+				.Where(x => x.Extension.ToLower() == ".dat");
 			FolderPathName = directory.FullName;
+
 			ProgressModel prModel = new ProgressModel();
-			var progress = new Progress<ProgressModel>();
-			progress.ProgressChanged +=  (sender, e) =>  ProgressValue = e.Percentage;
-			IProgress<ProgressModel> pr = progress;
-			List<Rec> temp = new List<Rec> ();
+			IProgress<ProgressModel> progress = new Progress<ProgressModel>((value) =>
+			{
+				 ProgressValue += value.Percentage;
+			});
+			var prog = progress as Progress<ProgressModel>;
+			prog.ProgressChanged += Progress_ProgressChanged;
+
+			List<Rec> temp = new List<Rec>();
 			List<Rec> temp2 = new List<Rec>();
 			int i = 0;
-			MaxValue = files.Count;
+			MaxValue = files.Count();
+
 			foreach (var file in files)
 			{
-
-				if (file.Extension.ToLower() != ".dat")
-					continue;
 
 				var date = file.FullName.FormatDate();
 				i++;
 				if (date >= StartDateTime.Date && date <= EndDateTime.Date)
 				{
 					prModel.Percentage = i;
-					pr.Report(prModel);
+					progress.Report(prModel);
 					await convert.ChangeDocumnet(file.FullName);
 					temp = convert.DeSerialize(file.FullName);
 					if (temp == null) continue;
@@ -170,10 +177,14 @@ namespace ButcherApp.ViewModels
 			_tempDataEntry = DataEntry;
 			SetOverall();
 			prModel.Percentage = 0;
-			pr.Report(prModel);
+			progress.Report(prModel);
 
 		}
 
+		private void Progress_ProgressChanged(object sender, ProgressModel e)
+		{
+			ProgressValue = e.Percentage;
+		}
 
 		public void SetFolder()
 		{
@@ -185,34 +196,38 @@ namespace ButcherApp.ViewModels
 				FolderPathName = Path.GetDirectoryName(openFile.FileName);
 			}
 		}
-		public void ExportToExcel()
+		public async Task ExportToExcel()
 		{
-			if (DataEntry?.Count == 0||DataEntry==null)
+			if (DataEntry?.Count == 0 || DataEntry == null)
 			{
 				MessageBox.Show("Data is empty");
 				return;
 			}
-			Progress<ProgressModel> progress = new Progress<ProgressModel>();
-			progress.ProgressChanged += (sender, e) => { ProgressValue = e.Percentage; };
+			IProgress<ProgressModel> progress = new Progress<ProgressModel>((value) =>
+			{
+				ProgressValue += value.Percentage;
+			});
+			var prog = progress as Progress<ProgressModel>;
+			prog.ProgressChanged += Progress_ProgressChanged;
 			MaxValue = _dataEntry.Count;
 			ExcelDocument excel = new ExcelDocument();
 			_saveExcelDocumentsPath.CreateFolder();
-			excel.Export(_saveExcelDocumentsPath + Path.Combine ($"\\{_sortingDate.FirstOrDefault().ToShortDateString()}_{_sortingDate.LastOrDefault().ToShortDateString()}.xlsx"),
-				_dataEntry.ToList(),progress);
+			await excel.Export(_saveExcelDocumentsPath + Path.Combine($"\\{_sortingDate.FirstOrDefault().ToShortDateString()}_{_sortingDate.LastOrDefault().ToShortDateString()}.xlsx"),
+				_dataEntry.ToList(), progress);
 		}
 		public void SearchData()
 		{
 			int _value = 0;
-
+			if (DataEntry == null || DataEntry.Count == 0) return;
 			switch (SelectedFilter)
 			{
-				case  "HeadProgres":
+				case "HeadProgres":
 					if (Int32.TryParse(SearchingString, out _value))
 						DataEntry = _tempDataEntry.Where(x => x.HeadProgres == _value).ToBindable();
 					break;
 				case "Tare":
-					if(Int32.TryParse(SearchingString,out _value))
-						DataEntry = _tempDataEntry.Where(x => x.Tare== _value).ToBindable();
+					if (Int32.TryParse(SearchingString, out _value))
+						DataEntry = _tempDataEntry.Where(x => x.Tare == _value).ToBindable();
 					break;
 				case "Net":
 					if (Int32.TryParse(SearchingString, out _value))
@@ -229,10 +244,10 @@ namespace ButcherApp.ViewModels
 				case "ProductTot":
 					double val = 0.0;
 					if (Double.TryParse(SearchingString, out val))
-						DataEntry = _tempDataEntry.Where(x => Convert.ToString(x.ProductProgres).Contains(val.ToString()) ).ToBindable();
+						DataEntry = _tempDataEntry.Where(x => Convert.ToString(x.ProductProgres).Contains(val.ToString())).ToBindable();
 					break;
 				case "HeadName":
-						DataEntry = _tempDataEntry.Where(x => x.HeadName.Contains(SearchingString.ToUpper())).ToBindable();
+					DataEntry = _tempDataEntry.Where(x => x.HeadName.Contains(SearchingString.ToUpper())).ToBindable();
 					break;
 				case "Note":
 					DataEntry = _tempDataEntry.Where(x => x.Note1.Contains(SearchingString.ToLower())).ToBindable();
@@ -241,10 +256,7 @@ namespace ButcherApp.ViewModels
 				default:
 					break;
 			}
-			var netSum = DataEntry.Sum(x => x.Net);
-			var count = DataEntry.Count;
-
-			Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
+			SetOverall();	
 		}
 
 
@@ -254,6 +266,14 @@ namespace ButcherApp.ViewModels
 			var count = DataEntry.Count;
 
 			Overall = string.Format($"Sum of Net  = {netSum}  Count = {count} ");
+		}
+		public void Navigate()
+		{
+
+			if (Directory.Exists(_saveExcelDocumentsPath))
+			{
+				Process.Start(_saveExcelDocumentsPath);
+			}
 		}
 	}
 }

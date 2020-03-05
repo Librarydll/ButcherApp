@@ -1,23 +1,17 @@
 ﻿using ButcherApp.Models;
-using Newtonsoft.Json;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace ButcherApp.Converter
 {
 	public class ExcelDocument : IExport
 	{
-		public void Export(string filePath,List<Rec> collection,IProgress<ProgressModel> progress)
+		public async Task Export(string filePath,List<Rec> collection,IProgress<ProgressModel> progress)
 		{	
 			Rec rec = new Rec();
 			string sheetName = Path.GetFileNameWithoutExtension(filePath);

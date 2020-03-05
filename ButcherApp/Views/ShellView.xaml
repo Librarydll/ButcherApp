@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Icon="/Icons/Mainicon.ico"
-        Title="ShellView" Height="450" Width="800">
+        Title="CFT" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -28,16 +28,22 @@
             <Border  CornerRadius="1" Margin="2" BorderThickness="0.51" BorderBrush="#FF1F1F1F">
                 <StackPanel Orientation="Horizontal">
                     <Button Background="{x:Null}" Margin="0,0,50,0" Height="35"  x:Name="SetFolder" VerticalAlignment="Stretch">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Folder"/>
-                    <TextBlock Text="Folder..."/>
-                </StackPanel>
-            </Button>
-                <TextBlock  x:Name="FolderPathName" VerticalAlignment="Center" Margin="0,0,10,0" Padding="3">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Folder"/>
+                            <TextBlock Text="Folder..."/>
+                        </StackPanel>
+                    </Button >
+                    <TextBlock  x:Name="FolderPathName" VerticalAlignment="Center" Margin="0,0,10,0" Padding="3">
                         ...
-                </TextBlock>
+                    </TextBlock>
                 </StackPanel>
             </Border>
+            <Button Margin="2" Height="35" x:Name="Navigate" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="FolderMove"/>
+                    <TextBlock Text="Navigate to documents"/>
+                </StackPanel>
+            </Button>
         </ToolBar >
         <ToolBar Grid.Row="1" ToolBarTray.IsLocked="True">
             <DatePicker Margin="5" x:Name="StartDateTime">
@@ -83,8 +89,9 @@
                 <DataGridTextColumn Header="Expiry" Binding="{Binding Path=Expiry}"/>
                 <DataGridTextColumn Header="Note0" Binding="{Binding Path=Note0}"/>
                 <DataGridTextColumn Header="Note1" Binding="{Binding Path=Note1}"/>
-               
                 <DataGridTextColumn Header="Note2" Binding="{Binding Path=Note2}"/>
+                <DataGridTextColumn Header="Flow" Binding="{Binding Path=Flow}"/>
+
             </DataGrid.Columns>
         </DataGrid>
         <DockPanel Grid.Row="4" >

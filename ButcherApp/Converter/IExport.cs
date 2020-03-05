@@ -9,6 +9,8 @@ namespace ButcherApp.Converter
 {
     public interface IExport
     {
-		void Export(string filePath,List<Rec> collection,IProgress<ProgressModel> progress);
-    }
+		//void Export(string filePath,List<Rec> collection,IProgress<ProgressModel> progress);
+		Task Export(string filePath, List<Rec> collection, IProgress<ProgressModel> progress);
+
+	}
 }
