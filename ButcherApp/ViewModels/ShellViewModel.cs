@@ -157,22 +157,26 @@ namespace ButcherApp.ViewModels
 			int i = 0;
 			MaxValue = files.Count();
 
-			foreach (var file in files)
-			{
+			await Task.Run(async () =>
+		   {
+			   foreach (var file in files)
+			   {
 
-				var date = file.FullName.FormatDate();
-				i++;
-				if (date >= StartDateTime.Date && date <= EndDateTime.Date)
-				{
-					prModel.Percentage = i;
-					progress.Report(prModel);
-					await convert.ChangeDocumnet(file.FullName);
-					temp = convert.DeSerialize(file.FullName);
-					if (temp == null) continue;
-					temp2.AddRange(temp);
-					_sortingDate.Add(date);
-				}
-			}
+				   var date = file.FullName.FormatDate();
+				   i++;
+				   if (date >= StartDateTime.Date && date <= EndDateTime.Date)
+				   {
+					   prModel.Percentage = i;
+					   progress.Report(prModel);
+					   await convert.ChangeDocumnet(file.FullName);
+					   temp = convert.DeSerialize(file.FullName);
+					   if (temp == null) continue;
+					   temp2.AddRange(temp);
+					   _sortingDate.Add(date);
+				   }
+			   }
+		   });
+			
 			DataEntry = new BindableCollection<Rec>(temp2);
 			_tempDataEntry = DataEntry;
 			SetOverall();

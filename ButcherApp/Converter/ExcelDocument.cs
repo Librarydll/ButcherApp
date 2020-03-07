@@ -4,6 +4,7 @@ using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -11,44 +12,55 @@ namespace ButcherApp.Converter
 {
 	public class ExcelDocument : IExport
 	{
-		public async Task Export(string filePath,List<Rec> collection,IProgress<ProgressModel> progress)
-		{	
-			Rec rec = new Rec();
-			string sheetName = Path.GetFileNameWithoutExtension(filePath);
-			XSSFWorkbook xSSF = new XSSFWorkbook();
-			ISheet sheet = xSSF.CreateSheet(sheetName);
-			var propertiesName = rec.GetType().GetProperties();
-			ProgressModel model = new ProgressModel();
-			var headerRow = sheet.CreateRow(0);
-			for (int i = 0; i < propertiesName.Length; i++)
-			{
-				var cell = headerRow.CreateCell(i);
-				cell.SetCellValue(propertiesName[i].Name);
-			}
-			for (int i = 0; i < collection.Count; i++)
-			{
-				var rowIndex = i + 1;
-				var row = sheet.CreateRow(rowIndex);
-				model.Percentage = rowIndex;
-				progress.Report(model);
-				for (int j = 0; j < propertiesName.Length; j++)
-				{
-					
-					var o = collection[i];
-					var value = o.GetType().GetProperty(propertiesName[j].Name).GetValue(o, null).ToString();
-					CellType cellType = propertiesName[j].PropertyType.Name =="String" ? CellType.String : CellType.Numeric;
-					var cell = row.CreateCell(j);
-					cell.SetCellValue(value);
-					cell.SetCellType(cellType);
-				}
-			}
-			model.Percentage = 0;
-			progress.Report(model);
-			FileStream file = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
-			xSSF.Write(file);
-			file.Dispose();
-			file.Close();
-		}
+		public async Task Export(string filePath, List<Rec> collection, IProgress<ProgressModel> progress) => await Task.Run(() =>
+		   {
+			   Rec rec = new Rec();
+			   string sheetName = Path.GetFileNameWithoutExtension(filePath);
+			   XSSFWorkbook xSSF = new XSSFWorkbook();
+			   ISheet sheet = xSSF.CreateSheet(sheetName);
+			   var propertiesName = rec.GetType().GetProperties();
+			   ProgressModel model = new ProgressModel();
+			   var headerRow = sheet.CreateRow(0);
+			   for (int i = 0; i < propertiesName.Length; i++)
+			   {
+				   var cell = headerRow.CreateCell(i);
+				   cell.SetCellValue(propertiesName[i].Name);
+			   }
+
+			   for (int i = 0; i < collection.Count; i++)
+			   {
+				   var rowIndex = i + 1;
+				   var row = sheet.CreateRow(rowIndex);
+				   model.Percentage = i;
+				   progress.Report(model);
+				   var o = collection[i];
+				   for (int j = 0; j < propertiesName.Length; j++)
+				   {
+					   var value = o.GetType().GetProperty(propertiesName[j].Name).GetValue(o, null).ToString();
+					  CellType cellType = propertiesName[j].PropertyType.Name == "String" ? CellType.String : (propertiesName[j].PropertyType.Name == "Nullable`1" ? CellType.String : CellType.Numeric);
+					   var cell = row.CreateCell(j);
+					   if (cellType == CellType.Numeric)
+					   {
+						   var result = double.Parse(value);
+						   cell.SetCellValue(result);
+					   }
+					   else
+					   {
+						   cell.SetCellValue(value);
+					   }
+					   cell.SetCellType(cellType);
+
+				   }
+			   }
+			   model.Percentage = 0;
+			   progress.Report(model);
+			   FileStream file = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
+			   xSSF.Write(file);
+			   file.Dispose();
+			   file.Close();
+			   Process.Start(filePath);
+		   });
+
 
 		private  DataTable CreateDataTable<T>(IEnumerable<T> list)
 		{
