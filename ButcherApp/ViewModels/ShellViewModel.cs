@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ButcherApp.ViewModels
 {
@@ -20,9 +22,10 @@ namespace ButcherApp.ViewModels
 		private XmlSetting setting = null;
 		private string _overall;
 		private string _folderPathName;
-		private DateTime _startDateTime;
-		private DateTime _endDateTime;
+		private DateTime _startDateTime = DateTime.Now;
+		private DateTime _endDateTime = DateTime.Now;
 		private readonly string _saveExcelDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Excel Documents";
+		private readonly IWindowManager windowManager;
 		private string _selectedFilter;
 		public string FolderPathName
 		{
@@ -53,7 +56,7 @@ namespace ButcherApp.ViewModels
 
 		public List<string> FilterName
 		{
-			get { return new List<string> { "HeadProgres", "Tare", "Net", "Gross", "Flow", "ProductTot", "HeadName", "Note" }; }
+			get { return new List<string> { "HeadProgres", "ProductProgres","Tare", "Net", "Gross", "Flow", "ProductTot", "HeadName", "Note" }; }
 		}
 
 		public string SelectedFilter
@@ -114,10 +117,11 @@ namespace ButcherApp.ViewModels
 				NotifyOfPropertyChange(() => EndDateTime);
 			}
 		}
-		public ShellViewModel()
+
+		public ShellViewModel(IWindowManager windowManager)
 		{
-			StartDateTime = DateTime.Now;
-			EndDateTime = DateTime.Now;
+			this.windowManager = windowManager;
+
 			setting = new XmlSetting(string.Empty);
 			if (string.IsNullOrWhiteSpace(setting.FilePath))
 				return;
@@ -147,7 +151,7 @@ namespace ButcherApp.ViewModels
 			ProgressModel prModel = new ProgressModel();
 			IProgress<ProgressModel> progress = new Progress<ProgressModel>((value) =>
 			{
-				 ProgressValue += value.Percentage;
+				ProgressValue += value.Percentage;
 			});
 			var prog = progress as Progress<ProgressModel>;
 			prog.ProgressChanged += Progress_ProgressChanged;
@@ -171,12 +175,19 @@ namespace ButcherApp.ViewModels
 					   await convert.ChangeDocumnet(file.FullName);
 					   temp = convert.DeSerialize(file.FullName);
 					   if (temp == null) continue;
+					   if (StartDateTime.Hour != EndDateTime.Hour|| StartDateTime.Minute != EndDateTime.Minute)
+					   {
+						   temp = temp.Where(x =>x.Time.Value.TimeOfDay >= StartDateTime.TimeOfDay
+											&& x.Time.Value.TimeOfDay <= EndDateTime.TimeOfDay)
+											.ToList();
+					   }
+
 					   temp2.AddRange(temp);
 					   _sortingDate.Add(date);
 				   }
 			   }
 		   });
-			
+
 			DataEntry = new BindableCollection<Rec>(temp2);
 			_tempDataEntry = DataEntry;
 			SetOverall();
@@ -256,11 +267,42 @@ namespace ButcherApp.ViewModels
 				case "Note":
 					DataEntry = _tempDataEntry.Where(x => x.Note1.Contains(SearchingString.ToLower())).ToBindable();
 					break;
+				case "ProductProgres":
+
+					var splited = SearchingString.Split().Where(x=>!string.IsNullOrWhiteSpace(x));
+
+					if (splited.Count() >= 2)
+					{
+						if (Int32.TryParse(splited.ElementAt(0), out _value)&& Int32.TryParse(splited.ElementAt(1), out int _value2))
+						{
+							DataEntry = _tempDataEntry.Where(x => x.ProductProgres >= _value&& x.ProductProgres<= _value2).ToBindable();
+						}
+
+					}
+				
+					
+					break;
 
 				default:
 					break;
 			}
-			SetOverall();	
+			SetOverall();
+		}
+
+		public void PreviewKeyDownEventHandler(KeyEventArgs e)
+		{
+			if (e.Key == Key.F1 && Keyboard.IsKeyDown(Key.LeftCtrl))
+			{
+			 Task.Run(async()=>  await	ExportToExcel());
+			}
+			else if (e.Key == Key.F2 && Keyboard.IsKeyDown(Key.LeftCtrl))
+			{
+				Navigate();
+			}
+			else if (e.Key == Key.F3 && Keyboard.IsKeyDown(Key.LeftCtrl))
+			{
+				ExcelSetting();
+			}
 		}
 
 
@@ -278,6 +320,11 @@ namespace ButcherApp.ViewModels
 			{
 				Process.Start(_saveExcelDocumentsPath);
 			}
+		}
+
+		public void ExcelSetting()
+		{
+			windowManager.ShowDialog(new SettingViewModel());
 		}
 	}
 }

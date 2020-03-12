@@ -20,7 +20,7 @@ namespace ButcherApp.Converter
 				{
 					_obj = (T)serializer.Deserialize(stream);
 				}
-				catch (Exception EX)
+				catch (Exception ex)
 				{
 
 					return null;

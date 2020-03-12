@@ -5,9 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ButcherApp.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:toolKit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:cal="http://www.caliburnproject.org"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
+        WindowState="Maximized"
         Icon="/Icons/Mainicon.ico"
-        Title="CFT" Height="450" Width="800">
+        Title="CFT" Height="450" Width="800"
+        >
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewKeyDown">
+            <cal:ActionMessage MethodName="PreviewKeyDownEventHandler">
+                <cal:Parameter Value="$eventArgs"/>
+            </cal:ActionMessage>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -19,11 +32,12 @@
 
         <ToolBar HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
 
-            <Button Margin="2" Height="35" x:Name="ExportToExcel" VerticalAlignment="Stretch">
+            <Button Margin="2" Height="35" x:Name="ExportToExcel" VerticalAlignment="Stretch" ToolTip="Ctrl+F1">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FileExcel"/>
                     <TextBlock Text="Excel"/>
                 </StackPanel>
+           
             </Button>
             <Border  CornerRadius="1" Margin="2" BorderThickness="0.51" BorderBrush="#FF1F1F1F">
                 <StackPanel Orientation="Horizontal">
@@ -38,21 +52,37 @@
                     </TextBlock>
                 </StackPanel>
             </Border>
-            <Button Margin="2" Height="35" x:Name="Navigate" VerticalAlignment="Stretch">
+            <Button ToolTip="Ctrl+F3" Margin="2" Height="35" x:Name="ExcelSetting" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Settings"/>
+                    <TextBlock Text="Excel settings"/>
+                </StackPanel>
+            </Button>
+            <Button ToolTip="Ctrl+F2" Margin="2" Height="35" x:Name="Navigate" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FolderMove"/>
                     <TextBlock Text="Navigate to documents"/>
                 </StackPanel>
             </Button>
+           
         </ToolBar >
         <ToolBar Grid.Row="1" ToolBarTray.IsLocked="True">
-            <DatePicker Margin="5" x:Name="StartDateTime">
+
+
+            <toolKit:DateTimePicker Margin="5" Value="{Binding StartDateTime,UpdateSourceTrigger=PropertyChanged}" Kind="Local" >
+            </toolKit:DateTimePicker>
+            <!--<DatePicker Margin="5" x:Name="StartDateTime">
                 
-            </DatePicker>
+            </DatePicker>-->
             <TextBlock Text="To"  Padding="8"/>
-            <DatePicker Margin="5" x:Name="EndDateTime">
+            <toolKit:DateTimePicker Margin="5" Value="{Binding EndDateTime,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Kind="Local">
+
+            </toolKit:DateTimePicker>
+
+          
+            <!--<DatePicker Margin="5" x:Name="EndDateTime">
                 
-            </DatePicker>
+            </DatePicker>-->
             <Button Margin="5" Height="25" x:Name="OpenXmlFile" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="File"/>
@@ -74,9 +104,10 @@
                 </Button>
             </StackPanel>
         </Border>
-        <DataGrid Grid.Row="3" x:Name="DataEntry" AutoGenerateColumns="False">
+        <DataGrid IsReadOnly="True" Grid.Row="3" x:Name="DataEntry" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="HeadProgres" Binding="{Binding Path=HeadProgres}"/>
+                <DataGridTextColumn Header="ProductProgres" Binding="{Binding Path=ProductProgres}"/>
                 <DataGridTemplateColumn Header="Date" CellTemplate="{StaticResource DataGridTemplate}"/>
                 <DataGridTemplateColumn Header="Time" CellTemplate="{StaticResource DataGridTimeTemplate}"/>
                 <DataGridTextColumn Header="HeadName" Binding="{Binding Path=HeadName}"/>
@@ -94,9 +125,12 @@
 
             </DataGrid.Columns>
         </DataGrid>
-        <DockPanel Grid.Row="4" >
+        <DockPanel  Grid.Row="4" >
             <TextBlock DockPanel.Dock="Left" Height="35" Margin="3" TextWrapping="Wrap" HorizontalAlignment="Left" FontSize="18" FontWeight="DemiBold" Text="{Binding Path=Overall}" Padding="3"/>
             <ProgressBar Margin="3" x:Name="ProgressValue" Background="{x:Null}" HorizontalAlignment="Right" Width="350" Maximum="{Binding Path=MaxValue}"  DockPanel.Dock="Right"/>
         </DockPanel>
+
+
+      
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
-﻿using ButcherApp.Models;
+﻿using ButcherApp.Core;
+using ButcherApp.Models;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -6,12 +7,18 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ButcherApp.Converter
 {
 	public class ExcelDocument : IExport
 	{
+		EcxelSettingHelper settingHelper;
+		public ExcelDocument()
+		{
+			settingHelper = new EcxelSettingHelper();
+		}
 		public async Task Export(string filePath, List<Rec> collection, IProgress<ProgressModel> progress) => await Task.Run(() =>
 		   {
 			   Rec rec = new Rec();
@@ -20,11 +27,16 @@ namespace ButcherApp.Converter
 			   ISheet sheet = xSSF.CreateSheet(sheetName);
 			   var propertiesName = rec.GetType().GetProperties();
 			   ProgressModel model = new ProgressModel();
+
+			   var requiredProps = settingHelper.GetSettingNames();
 			   var headerRow = sheet.CreateRow(0);
-			   for (int i = 0; i < propertiesName.Length; i++)
+			   for (int i = 0,j=0; i < propertiesName.Length; i++)
 			   {
-				   var cell = headerRow.CreateCell(i);
+				   if (!requiredProps.Any(x => x.Equals(propertiesName[i].Name))) continue;
+
+				   var cell = headerRow.CreateCell(j);
 				   cell.SetCellValue(propertiesName[i].Name);
+				   j++;
 			   }
 
 			   for (int i = 0; i < collection.Count; i++)
@@ -34,11 +46,14 @@ namespace ButcherApp.Converter
 				   model.Percentage = i;
 				   progress.Report(model);
 				   var o = collection[i];
-				   for (int j = 0; j < propertiesName.Length; j++)
+				   for (int j = 0,k=0; j < propertiesName.Length; j++)
 				   {
+					   if (!requiredProps.Any(x => x.Equals(propertiesName[j].Name))) continue;
+
 					   var value = o.GetType().GetProperty(propertiesName[j].Name).GetValue(o, null).ToString();
 					  CellType cellType = propertiesName[j].PropertyType.Name == "String" ? CellType.String : (propertiesName[j].PropertyType.Name == "Nullable`1" ? CellType.String : CellType.Numeric);
-					   var cell = row.CreateCell(j);
+					   var cell = row.CreateCell(k);
+					   k++;
 					   if (cellType == CellType.Numeric)
 					   {
 						   var result = double.Parse(value);

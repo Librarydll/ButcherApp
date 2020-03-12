@@ -1,0 +1,202 @@
+﻿<Window x:Class="ButcherApp.Views.SettingView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:ButcherApp.Views"
+        mc:Ignorable="d"
+     
+        WindowStartupLocation="CenterScreen"
+        Title="Excel settings" Height="800" Width="600">
+  
+    <Grid DataContext="{Binding ExcelSetting}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center">
+            <StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note0}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note0</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note1}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note1</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note2}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note2</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note3}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note3</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note4}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note4</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note5}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note5</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Note6}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Note6</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Tare}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Tare</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Net}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Net</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Gross}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Gross</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Flow}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Flow</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding HeadProgres}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> HeadProgres</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding ProductCode}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> ProductCode</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding ProductProgres}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> ProductProgres</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding ProductName}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> ProductName</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding ProductTot}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> ProductTot</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Date}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Date</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Time}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Time</TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer  Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center">
+            <StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Key}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Key</TextBlock>
+                </StackPanel>
+                
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Flag}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Flag</TextBlock>
+                </StackPanel>
+                
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Print}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Print</TextBlock>
+                </StackPanel>
+                
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding HistName}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> HistName</TextBlock>
+                </StackPanel>
+                                        
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding HeadName}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> HeadName</TextBlock>
+                </StackPanel>
+                
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding HeadSide}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> HeadSide</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Client}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Client</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Expiry}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Expiry</TextBlock>
+                </StackPanel>
+                
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding FillerProgres}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> FillerProgres</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding YearCode}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> YearCode</TextBlock>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding DayCode}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> DayCode</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding PlantCode}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> PlantCode</TextBlock>
+                </StackPanel>
+
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Plant}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Plant</TextBlock>
+                </StackPanel>
+
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding ShiftCode}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> ShiftCode</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding CapSter}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> CapSter</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Container}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> Container</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding DecimalSymbol}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> DecimalSymbol</TextBlock>
+                </StackPanel>
+
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding BarCode}" Margin="0 0 5 0"></CheckBox>
+                    <TextBlock> BarCode</TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <Button x:Name="Confirm" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Margin="10" Padding="5" FontSize="15" FontWeight="DemiBold">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Margin="3" Kind="Check"/>
+                <TextBlock Text="Ok"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

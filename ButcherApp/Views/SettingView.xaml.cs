@@ -15,14 +15,13 @@ using System.Windows.Shapes;
 namespace ButcherApp.Views
 {
 	/// <summary>
-	/// Interaction logic for ShellView.xaml
+	/// Interaction logic for SettingView.xaml
 	/// </summary>
-	public partial class ShellView : Window
+	public partial class SettingView : Window
 	{
-		public ShellView()
+		public SettingView()
 		{
 			InitializeComponent();
 		}
-
 	}
 }
