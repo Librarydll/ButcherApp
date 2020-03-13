@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using ButcherApp.ViewModels;
+using ButcherApp.Service.Log;
 
 namespace ButcherApp
 {
@@ -21,7 +22,8 @@ namespace ButcherApp
 			container = new SimpleContainer();
 			container.Instance(container);
 			container.Singleton<IWindowManager, WindowManager>()
-				.Singleton<IEventAggregator, EventAggregator>();
+				.Singleton<IEventAggregator, EventAggregator>()
+				.Singleton<LogHelper>();
 
 			container.PerRequest<ShellViewModel>()
 				.PerRequest<SettingViewModel>();

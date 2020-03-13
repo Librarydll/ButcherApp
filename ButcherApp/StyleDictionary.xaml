@@ -18,7 +18,7 @@
     <DataTemplate x:Key="DataGridTimeTemplate">
         <StackPanel Orientation="Vertical" Width="100" Height="40" HorizontalAlignment="Center">
             <Border BorderThickness="1" BorderBrush="Black" Background="LawnGreen">
-                <TextBlock Text="{Binding Path=Time, StringFormat={}{0:hh:mm:ss}}" FontSize="15" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding Path=Time, StringFormat={}{0:HH:mm:ss}}" FontSize="15" HorizontalAlignment="Center"/>
             </Border>
         </StackPanel>
     </DataTemplate>

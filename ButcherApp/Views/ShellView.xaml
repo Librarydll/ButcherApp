@@ -9,10 +9,36 @@
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
+        xmlns:l="clr-namespace:ButcherApp.Core"
         WindowState="Maximized"
         Icon="/Icons/Mainicon.ico"
         Title="CFT" Height="450" Width="800"
         >
+
+    <Window.Resources>
+        <Storyboard x:Key="OpenRMenu">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="GridMenuRight">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="200"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="CloseRMenu">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="GridMenuRight">
+                <EasingDoubleKeyFrame KeyTime="0" Value="200"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="CheckBox.Checked" SourceName="Logs">
+            <BeginStoryboard Storyboard="{StaticResource OpenRMenu}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="CheckBox.Unchecked" SourceName="Logs">
+            <BeginStoryboard Storyboard="{StaticResource CloseRMenu}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="PreviewKeyDown">
             <cal:ActionMessage MethodName="PreviewKeyDownEventHandler">
@@ -29,8 +55,11 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-
-        <ToolBar HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <ToolBar Grid.ColumnSpan="2" HorizontalAlignment="Stretch" ToolBarTray.IsLocked="True">
 
             <Button Margin="2" Height="35" x:Name="ExportToExcel" VerticalAlignment="Stretch" ToolTip="Ctrl+F1">
                 <StackPanel Orientation="Horizontal">
@@ -64,25 +93,60 @@
                     <TextBlock Text="Navigate to documents"/>
                 </StackPanel>
             </Button>
-           
+            <CheckBox Margin="2" Height="35" x:Name="Logs" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Foreground="#FF0597AE" Kind="InfoCircle"/>
+                    <TextBlock Text="Logs"/>
+                </StackPanel>
+            </CheckBox>
         </ToolBar >
         <ToolBar Grid.Row="1" ToolBarTray.IsLocked="True">
 
 
-            <toolKit:DateTimePicker Margin="5" Value="{Binding StartDateTime,UpdateSourceTrigger=PropertyChanged}" Kind="Local" >
-            </toolKit:DateTimePicker>
-            <!--<DatePicker Margin="5" x:Name="StartDateTime">
-                
-            </DatePicker>-->
+            <!--<toolKit:DateTimePicker Margin="5" Value="{Binding StartDateTime,UpdateSourceTrigger=PropertyChanged}" Kind="Local" >
+            </toolKit:DateTimePicker>-->
+            <DatePicker l:AttachedProperties.RegisterBlackoutDates="{Binding BlackoutDates,Mode=TwoWay}" Margin="5" x:Name="StartDateTime">
+               
+            </DatePicker>
             <TextBlock Text="To"  Padding="8"/>
-            <toolKit:DateTimePicker Margin="5" Value="{Binding EndDateTime,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Kind="Local">
+            <!--<toolKit:DateTimePicker Margin="5" Value="{Binding EndDateTime,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Kind="Local">
 
-            </toolKit:DateTimePicker>
+            </toolKit:DateTimePicker>-->
 
-          
-            <!--<DatePicker Margin="5" x:Name="EndDateTime">
+            <DatePicker l:AttachedProperties.RegisterBlackoutDates="{Binding BlackoutDates,Mode=TwoWay}" Margin="5" x:Name="EndDateTime">
                 
-            </DatePicker>-->
+            </DatePicker>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <CheckBox x:Name="IsTimeEnable" IsChecked="False">
+
+                </CheckBox>
+                <TextBlock>
+                    Enable time filtering
+                </TextBlock>
+            </StackPanel>
+            
+            <StackPanel DataContext="{Binding SelectedTime}" Margin="8 5 5 5" Orientation="Horizontal">
+                <toolKit:TimeSpanUpDown Value="{Binding FromTime}" ShowDays="False" ShowSeconds="False">
+
+                </toolKit:TimeSpanUpDown>
+
+                <TextBlock Text="To"  Padding="8"/>
+
+                <toolKit:TimeSpanUpDown Value="{Binding ToTime}"  ShowDays="False" ShowSeconds="False">
+
+                </toolKit:TimeSpanUpDown>
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=IsTimeEnable,Path=IsChecked}" Value="false">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+           
+      
             <Button Margin="5" Height="25" x:Name="OpenXmlFile" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="File"/>
@@ -129,8 +193,15 @@
             <TextBlock DockPanel.Dock="Left" Height="35" Margin="3" TextWrapping="Wrap" HorizontalAlignment="Left" FontSize="18" FontWeight="DemiBold" Text="{Binding Path=Overall}" Padding="3"/>
             <ProgressBar Margin="3" x:Name="ProgressValue" Background="{x:Null}" HorizontalAlignment="Right" Width="350" Maximum="{Binding Path=MaxValue}"  DockPanel.Dock="Right"/>
         </DockPanel>
+        
+        <!--column 2-->
+        <Grid  Grid.Row="1" Grid.Column="1" Grid.RowSpan="5" x:Name="GridMenuRight">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ListView x:Name="LogFiles">
 
-
+                </ListView>
+            </ScrollViewer>
+        </Grid>
       
     </Grid>
 </Window>

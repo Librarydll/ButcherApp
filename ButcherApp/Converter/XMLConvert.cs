@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ButcherApp.Service.Log;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,6 +10,13 @@ namespace ButcherApp.Converter
 	public class XMLConvert <T> where T:class
 	{
 		private XmlSerializer serializer = new XmlSerializer(typeof(T));
+		private readonly LogHelper logHelper;
+		public XMLConvert(LogHelper logHelper)
+		{
+			this.logHelper = logHelper;
+		}
+
+		
 
 		public T DeSerialize(string path)
 		{
@@ -22,7 +30,7 @@ namespace ButcherApp.Converter
 				}
 				catch (Exception ex)
 				{
-
+					logHelper.LogOnError(new LogModel { ErrorName = ex.Message, FileName = Path.GetFileNameWithoutExtension(path)});
 					return null;
 				}
 			}

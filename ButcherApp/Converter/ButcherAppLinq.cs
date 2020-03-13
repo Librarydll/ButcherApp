@@ -23,19 +23,10 @@ namespace ButcherApp.Converter
 
 		public static  DateTime FormatDate(this string str)
 		{
-			if (!str.Contains("PX"))
-				return DateTime.Now;
 			str = Path.GetFileNameWithoutExtension(str);
 			var newStr = string.Concat(str.ToCharArray().Where(x => char.IsDigit(x)));
 			DateTime date = DateTime.Now;
-			try
-			{
-				date = DateTime.ParseExact(newStr, "yyMMdd", CultureInfo.InvariantCulture);
-			}
-			catch (Exception)
-			{
-				MessageBox.Show($"Name this file {str} is invalid","File naming error",MessageBoxButton.OK,MessageBoxImage.Error);
-			}
+			date = DateTime.ParseExact(newStr, "yyMMdd", CultureInfo.InvariantCulture);
 			return date;
 		}
 

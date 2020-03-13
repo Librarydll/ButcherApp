@@ -1,5 +1,7 @@
 ﻿using ButcherApp.Converter;
+using ButcherApp.Core;
 using ButcherApp.Models;
+using ButcherApp.Service.Log;
 using Caliburn.Micro;
 using Microsoft.Win32;
 using System;
@@ -26,6 +28,7 @@ namespace ButcherApp.ViewModels
 		private DateTime _endDateTime = DateTime.Now;
 		private readonly string _saveExcelDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Excel Documents";
 		private readonly IWindowManager windowManager;
+		private readonly LogHelper logHelper;
 		private string _selectedFilter;
 		public string FolderPathName
 		{
@@ -56,7 +59,7 @@ namespace ButcherApp.ViewModels
 
 		public List<string> FilterName
 		{
-			get { return new List<string> { "HeadProgres", "ProductProgres","Tare", "Net", "Gross", "Flow", "ProductTot", "HeadName", "Note" }; }
+			get { return new List<string> { "HeadProgres", "ProductProgres", "Tare", "Net", "Gross", "Flow", "ProductTot", "HeadName", "Note" }; }
 		}
 
 		public string SelectedFilter
@@ -66,6 +69,9 @@ namespace ButcherApp.ViewModels
 		}
 
 		private string _searchingString;
+		private TimeWatcher _selectedTime = new TimeWatcher();
+		private bool _isTimeEnable;
+		private CalendarBlackoutDatesCollection _blackoutDates;
 
 		public string SearchingString
 		{
@@ -118,15 +124,36 @@ namespace ButcherApp.ViewModels
 			}
 		}
 
-		public ShellViewModel(IWindowManager windowManager)
+		public TimeWatcher SelectedTime { get => _selectedTime; set { _selectedTime = value; NotifyOfPropertyChange(); } }
+		public bool IsTimeEnable { get => _isTimeEnable; set { _isTimeEnable = value; NotifyOfPropertyChange(); } }
+
+		public CalendarBlackoutDatesCollection BlackoutDates { get => _blackoutDates; set { _blackoutDates = value; NotifyOfPropertyChange(); } }
+
+		private BindableCollection<string> _logFiles =new BindableCollection<string>();
+
+		public BindableCollection<string> LogFiles
+		{
+			get { return _logFiles; }
+			set { _logFiles = value; NotifyOfPropertyChange(); }
+		}
+
+
+		public ShellViewModel(IWindowManager windowManager,LogHelper logHelper)
 		{
 			this.windowManager = windowManager;
-
+			this.logHelper = logHelper;
+			this.logHelper.OnErrorWriteEvent += LogHelper_OnErrorWriteEvent;
+			BlackoutDates = new CalendarBlackoutDatesCollection(new Calendar());
 			setting = new XmlSetting(string.Empty);
-			if (string.IsNullOrWhiteSpace(setting.FilePath))
-				return;
 			var path = setting.FilePath;
 			FolderPathName = false == string.IsNullOrWhiteSpace(path) ? path : string.Empty;
+			//Task.Run(async () => await LoadBlackOutDates());
+			LoadBlackOutDates();
+		}
+
+		private void LogHelper_OnErrorWriteEvent(LogModel logModel)
+		{
+			LogFiles.Add(logModel.ToString());
 		}
 
 		public async Task OpenXmlFile()
@@ -141,12 +168,11 @@ namespace ButcherApp.ViewModels
 				MessageBox.Show("Invalid Filter");
 				return;
 			}
-			XMLConvert<List<Rec>> convert = new XMLConvert<List<Rec>>();
-			DirectoryInfo directory = new DirectoryInfo(setting.FilePath);
-			var files = directory.GetFiles()
-				.Where(x => x.FullName.Contains("PX"))
-				.Where(x => x.Extension.ToLower() == ".dat");
-			FolderPathName = directory.FullName;
+			XMLConvert<List<Rec>> convert = new XMLConvert<List<Rec>>(logHelper);
+			var fileheper =FileHelper.GetLocalFiles(setting.FilePath);
+
+			var files = fileheper.Item2;
+			FolderPathName = fileheper.Item1.FullName;
 
 			ProgressModel prModel = new ProgressModel();
 			IProgress<ProgressModel> progress = new Progress<ProgressModel>((value) =>
@@ -175,10 +201,9 @@ namespace ButcherApp.ViewModels
 					   await convert.ChangeDocumnet(file.FullName);
 					   temp = convert.DeSerialize(file.FullName);
 					   if (temp == null) continue;
-					   if (StartDateTime.Hour != EndDateTime.Hour|| StartDateTime.Minute != EndDateTime.Minute)
+					   if (IsTimeEnable)
 					   {
-						   temp = temp.Where(x =>x.Time.Value.TimeOfDay >= StartDateTime.TimeOfDay
-											&& x.Time.Value.TimeOfDay <= EndDateTime.TimeOfDay)
+						   temp = temp.Where(x => x.Time.Value.TimeOfDay >= SelectedTime.FromTime && x.Time.Value.TimeOfDay <= SelectedTime.ToTime)
 											.ToList();
 					   }
 
@@ -209,6 +234,8 @@ namespace ButcherApp.ViewModels
 			{
 				setting = new XmlSetting(Path.GetDirectoryName(openFile.FileName));
 				FolderPathName = Path.GetDirectoryName(openFile.FileName);
+
+				LoadBlackOutDates();
 			}
 		}
 		public async Task ExportToExcel()
@@ -269,18 +296,18 @@ namespace ButcherApp.ViewModels
 					break;
 				case "ProductProgres":
 
-					var splited = SearchingString.Split().Where(x=>!string.IsNullOrWhiteSpace(x));
+					var splited = SearchingString.Split().Where(x => !string.IsNullOrWhiteSpace(x));
 
 					if (splited.Count() >= 2)
 					{
-						if (Int32.TryParse(splited.ElementAt(0), out _value)&& Int32.TryParse(splited.ElementAt(1), out int _value2))
+						if (Int32.TryParse(splited.ElementAt(0), out _value) && Int32.TryParse(splited.ElementAt(1), out int _value2))
 						{
-							DataEntry = _tempDataEntry.Where(x => x.ProductProgres >= _value&& x.ProductProgres<= _value2).ToBindable();
+							DataEntry = _tempDataEntry.Where(x => x.ProductProgres >= _value && x.ProductProgres <= _value2).ToBindable();
 						}
 
 					}
-				
-					
+
+
 					break;
 
 				default:
@@ -289,11 +316,25 @@ namespace ButcherApp.ViewModels
 			SetOverall();
 		}
 
+		public  void LoadBlackOutDates()
+		{
+			var fileheper = FileHelper.GetLocalFiles(setting.FilePath);
+			var files = fileheper.Item2;
+
+			foreach (var file in files)
+			{
+				var date = file.FullName.FormatDate();
+				BlackoutDates.Add(new CalendarDateRange(date));
+			}
+		}
+
+
+
 		public void PreviewKeyDownEventHandler(KeyEventArgs e)
 		{
 			if (e.Key == Key.F1 && Keyboard.IsKeyDown(Key.LeftCtrl))
 			{
-			 Task.Run(async()=>  await	ExportToExcel());
+				Task.Run(async () => await ExportToExcel());
 			}
 			else if (e.Key == Key.F2 && Keyboard.IsKeyDown(Key.LeftCtrl))
 			{
@@ -304,7 +345,6 @@ namespace ButcherApp.ViewModels
 				ExcelSetting();
 			}
 		}
-
 
 		public void SetOverall()
 		{

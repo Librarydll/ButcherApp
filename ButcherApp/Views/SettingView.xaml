@@ -6,11 +6,20 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ButcherApp.Views"
         mc:Ignorable="d"
-     
+        BorderThickness="0"
+        xmlns:converter="clr-namespace:ButcherApp.Converter"
         WindowStartupLocation="CenterScreen"
-        Title="Excel settings" Height="800" Width="600">
-  
-    <Grid DataContext="{Binding ExcelSetting}">
+        Title="Excel settings" Height="500" Width="600">
+    <Window.Resources>
+        <converter:BrushColorConverter x:Key="ColorConverter"/>
+        <Style TargetType="Border">
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+    </Window.Resources>
+        
+    <Grid DataContext="{Binding ExcelSetting}" Background="#FFECFBFF">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
@@ -19,180 +28,265 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center">
-            <StackPanel>
-                <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note0}" Margin="0 0 5 0"></CheckBox>
+        <WrapPanel Grid.ColumnSpan="2" Margin="2">
+            <Border BorderBrush="{Binding ElementName=Note0,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+                <StackPanel Margin="10" Orientation="Horizontal" >
+                    <CheckBox x:Name="Note0" IsChecked="{Binding Note0}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note0</TextBlock>
                 </StackPanel>
+            </Border>
+
+            <Border  BorderBrush="{Binding ElementName=Note1,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note1}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Note1" IsChecked="{Binding Note1}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note1</TextBlock>
                 </StackPanel>
+            </Border>
+
+            <Border   BorderBrush="{Binding ElementName=Note2,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note2}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Note2" IsChecked="{Binding Note2}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note2</TextBlock>
                 </StackPanel>
+            </Border>
+
+            <Border BorderBrush="{Binding ElementName=Note3,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note3}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Note3" IsChecked="{Binding Note3}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note3</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Note4,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note4}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Note4" IsChecked="{Binding Note4}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note4</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Note5,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note5}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Note5" IsChecked="{Binding Note5}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note5</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Note6,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Note6}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Note6" IsChecked="{Binding Note6}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Note6</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Tare,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Tare}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Tare" IsChecked="{Binding Tare}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Tare</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Net,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Net}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Net" IsChecked="{Binding Net}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Net</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Gross,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Gross}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Gross" IsChecked="{Binding Gross}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Gross</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Flow,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Flow}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Flow" IsChecked="{Binding Flow}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Flow</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=HeadProgres,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding HeadProgres}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="HeadProgres" IsChecked="{Binding HeadProgres}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> HeadProgres</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=ProductCode,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding ProductCode}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="ProductCode" IsChecked="{Binding ProductCode}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> ProductCode</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=ProductProgres,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding ProductProgres}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="ProductProgres" IsChecked="{Binding ProductProgres}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> ProductProgres</TextBlock>
                 </StackPanel>
-
+            </Border>
+            <Border BorderBrush="{Binding ElementName=ProductName,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding ProductName}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="ProductName" IsChecked="{Binding ProductName}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> ProductName</TextBlock>
                 </StackPanel>
-
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=ProductTot,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding ProductTot}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="ProductTot"  IsChecked="{Binding ProductTot}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> ProductTot</TextBlock>
                 </StackPanel>
-
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Date,Path=IsChecked,Converter={StaticResource ColorConverter}}">
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Date}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Date"  IsChecked="{Binding Date}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Date</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Time,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Time}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Time"  IsChecked="{Binding Time}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Time</TextBlock>
                 </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
-        <ScrollViewer  Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center">
-            <StackPanel>
+            </Border>
+
+
+            <Border  BorderBrush="{Binding ElementName=Key,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Key}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Key" IsChecked="{Binding Key}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Key</TextBlock>
                 </StackPanel>
-                
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Flag,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Flag}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Flag" IsChecked="{Binding Flag}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Flag</TextBlock>
                 </StackPanel>
-                
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Print,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Print}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Print" IsChecked="{Binding Print}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Print</TextBlock>
                 </StackPanel>
-                
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=HistName,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding HistName}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="HistName" IsChecked="{Binding HistName}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> HistName</TextBlock>
                 </StackPanel>
-                                        
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=HeadName,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding HeadName}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="HeadName" IsChecked="{Binding HeadName}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> HeadName</TextBlock>
                 </StackPanel>
-                
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=HeadSide,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding HeadSide}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="HeadSide" IsChecked="{Binding HeadSide}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> HeadSide</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Client,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Client}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Client" IsChecked="{Binding Client}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Client</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Expiry,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Expiry}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Expiry" IsChecked="{Binding Expiry}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Expiry</TextBlock>
                 </StackPanel>
-                
+            </Border>
+            <Border BorderBrush="{Binding ElementName=FillerProgres,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding FillerProgres}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="FillerProgres" IsChecked="{Binding FillerProgres}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> FillerProgres</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=YearCode,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding YearCode}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="YearCode" IsChecked="{Binding YearCode}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> YearCode</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=DayCode,Path=IsChecked,Converter={StaticResource ColorConverter}}">
+
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding DayCode}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="DayCode" IsChecked="{Binding DayCode}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> DayCode</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=PlantCode,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding PlantCode}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="PlantCode" IsChecked="{Binding PlantCode}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> PlantCode</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=Plant,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Plant}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Plant" IsChecked="{Binding Plant}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Plant</TextBlock>
                 </StackPanel>
-
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=ShiftCode,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding ShiftCode}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="ShiftCode" IsChecked="{Binding ShiftCode}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> ShiftCode</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=CapSter,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding CapSter}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="CapSter" IsChecked="{Binding CapSter}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> CapSter</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border  BorderBrush="{Binding ElementName=Container,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding Container}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="Container" IsChecked="{Binding Container}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> Container</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=DecimalSymbol,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding DecimalSymbol}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="DecimalSymbol" IsChecked="{Binding DecimalSymbol}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> DecimalSymbol</TextBlock>
                 </StackPanel>
+            </Border>
+            <Border BorderBrush="{Binding ElementName=BarCode,Path=IsChecked,Converter={StaticResource ColorConverter}}">
 
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <CheckBox IsChecked="{Binding BarCode}" Margin="0 0 5 0"></CheckBox>
+                    <CheckBox x:Name="BarCode" IsChecked="{Binding BarCode}" Margin="0 0 5 0"></CheckBox>
                     <TextBlock> BarCode</TextBlock>
                 </StackPanel>
+            </Border>
+        </WrapPanel>
+        <ScrollViewer Margin="0 5 0 0" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center">
+            <StackPanel>
+       
             </StackPanel>
         </ScrollViewer>
-        <Button x:Name="Confirm" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Margin="10" Padding="5" FontSize="15" FontWeight="DemiBold">
+        <ScrollViewer Margin="0 5 0 0"  Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center">
+
+            <StackPanel>
+
+             
+            </StackPanel>
+        </ScrollViewer>
+        <Button  Background="#FFECFBFF" x:Name="Confirm" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Margin="10" Padding="5" FontSize="15" FontWeight="DemiBold">
             <StackPanel Orientation="Horizontal">
                 <materialDesign:PackIcon Margin="3" Kind="Check"/>
                 <TextBlock Text="Ok"/>

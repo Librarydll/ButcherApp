@@ -113,7 +113,7 @@ namespace ButcherApp.Models
 		public string DecimalSymbol { get; set; }
 
 		[XmlElement(ElementName = "BarCode")]
-		public long BarCode { get; set; }
+		public string  BarCode { get; set; }
 
 
 	}
