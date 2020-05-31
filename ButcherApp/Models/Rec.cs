@@ -23,7 +23,7 @@ namespace ButcherApp.Models
 		public string Date { get; set; }
 
 		[XmlElement(ElementName ="Time")]
-		public DateTime? Time { get; set; }
+		public string Time { get; set; }
 
 		[XmlElement(ElementName = "HeadName")]
 		public string HeadName { get; set; }

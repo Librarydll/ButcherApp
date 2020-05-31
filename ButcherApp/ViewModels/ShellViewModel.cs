@@ -1,7 +1,6 @@
 ﻿using ButcherApp.Converter;
 using ButcherApp.Core;
 using ButcherApp.Models;
-using ButcherApp.Service.Log;
 using Caliburn.Micro;
 using Microsoft.Win32;
 using System;
@@ -28,7 +27,6 @@ namespace ButcherApp.ViewModels
 		private DateTime _endDateTime = DateTime.Now;
 		private readonly string _saveExcelDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Excel Documents";
 		private readonly IWindowManager windowManager;
-		private readonly LogHelper logHelper;
 		private string _selectedFilter;
 		public string FolderPathName
 		{
@@ -129,31 +127,15 @@ namespace ButcherApp.ViewModels
 
 		public CalendarBlackoutDatesCollection BlackoutDates { get => _blackoutDates; set { _blackoutDates = value; NotifyOfPropertyChange(); } }
 
-		private BindableCollection<string> _logFiles =new BindableCollection<string>();
-
-		public BindableCollection<string> LogFiles
-		{
-			get { return _logFiles; }
-			set { _logFiles = value; NotifyOfPropertyChange(); }
-		}
-
-
-		public ShellViewModel(IWindowManager windowManager,LogHelper logHelper)
+		public ShellViewModel(IWindowManager windowManager)
 		{
 			this.windowManager = windowManager;
-			this.logHelper = logHelper;
-			this.logHelper.OnErrorWriteEvent += LogHelper_OnErrorWriteEvent;
 			BlackoutDates = new CalendarBlackoutDatesCollection(new Calendar());
 			setting = new XmlSetting(string.Empty);
 			var path = setting.FilePath;
 			FolderPathName = false == string.IsNullOrWhiteSpace(path) ? path : string.Empty;
 			//Task.Run(async () => await LoadBlackOutDates());
 			LoadBlackOutDates();
-		}
-
-		private void LogHelper_OnErrorWriteEvent(LogModel logModel)
-		{
-			LogFiles.Add(logModel.ToString());
 		}
 
 		public async Task OpenXmlFile()
@@ -168,7 +150,7 @@ namespace ButcherApp.ViewModels
 				MessageBox.Show("Invalid Filter");
 				return;
 			}
-			XMLConvert<List<Rec>> convert = new XMLConvert<List<Rec>>(logHelper);
+			XMLConvert<List<Rec>> convert = new XMLConvert<List<Rec>>();
 			var fileheper =FileHelper.GetLocalFiles(setting.FilePath);
 
 			var files = fileheper.Item2;
@@ -203,7 +185,7 @@ namespace ButcherApp.ViewModels
 					   if (temp == null) continue;
 					   if (IsTimeEnable)
 					   {
-						   temp = temp.Where(x => x.Time.Value.TimeOfDay >= SelectedTime.FromTime && x.Time.Value.TimeOfDay <= SelectedTime.ToTime)
+						   temp = temp.FilterByTime(SelectedTime.FromTime, SelectedTime.ToTime)
 											.ToList();
 					   }
 
@@ -318,6 +300,7 @@ namespace ButcherApp.ViewModels
 
 		public  void LoadBlackOutDates()
 		{
+			if (!Directory.Exists(setting.FilePath)) return;
 			var fileheper = FileHelper.GetLocalFiles(setting.FilePath);
 			var files = fileheper.Item2;
 

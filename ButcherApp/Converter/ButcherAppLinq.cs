@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using ButcherApp.Models;
+using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -40,6 +41,18 @@ namespace ButcherApp.Converter
 		public static BindableCollection<T> ToBindable<T>(this IEnumerable<T> collection)
 		{
 			return new BindableCollection<T>(collection);
+		}
+
+		public static IEnumerable<Rec> FilterByTime(this IEnumerable<Rec> collection,TimeSpan from,TimeSpan to)
+		{
+			foreach (var rec in collection)
+			{
+				if(TimeSpan.TryParse(rec.Time,out TimeSpan time))
+				{
+					if (time >= from && time <= to)
+						yield return rec;
+				}
+			}
 		}
 
 	}

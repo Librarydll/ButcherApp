@@ -38,6 +38,7 @@ namespace ButcherApp.Core
 					element.BlackoutDates.Clear();
 					foreach (var dateRange in bindings)
 					{
+						if(dateRange.Start.Date!=DateTime.Now.Date)
 						element.BlackoutDates.Add(dateRange);
 					}
 				}

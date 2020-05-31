@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -51,7 +52,7 @@ namespace ButcherApp.Converter
 			catch (XmlException ex)
 			{
 
-				throw new XmlException(ex.Message);
+				MessageBox.Show(ex.Message);
 			}
 			
 			XmlNode pathNode = document.DocumentElement.SelectSingleNode("FilePath");

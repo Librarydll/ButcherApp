@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using ButcherApp.ViewModels;
-using ButcherApp.Service.Log;
 
 namespace ButcherApp
 {
@@ -17,13 +15,13 @@ namespace ButcherApp
 		{
 			Initialize();
 		}
+
 		protected override void Configure()
 		{
 			container = new SimpleContainer();
 			container.Instance(container);
 			container.Singleton<IWindowManager, WindowManager>()
-				.Singleton<IEventAggregator, EventAggregator>()
-				.Singleton<LogHelper>();
+				.Singleton<IEventAggregator, EventAggregator>();
 
 			container.PerRequest<ShellViewModel>()
 				.PerRequest<SettingViewModel>();
